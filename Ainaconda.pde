@@ -1,4 +1,5 @@
 Snake test;
+boolean isFood = false;
 
 
 
@@ -11,6 +12,6 @@ void setup() {
 
 void draw() { 
   background(255);
-  test.move();
-  test.show(); //<>//
+  test.move(); //<>//
+  test.show();
 }

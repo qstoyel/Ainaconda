@@ -1,34 +1,37 @@
 class Snake {
-  PVector[] pos;
+  ArrayList<PVector> pos;
   PVector vel;
+  PVector tmp;
   
   int snake_size;
   
+  boolean alive  = true;
+  
   Snake() {
-    pos = new PVector[height/10*width/10];
     snake_size = 5;
+    pos = new ArrayList<PVector>();
     for (int i = 0; i < snake_size; i ++) {
-      pos[i] = new PVector(width/2 + 10*i, height/2 + 10*i);
+      pos.add(new PVector(width/2 + 10*i, height/2 + 10*i));
     }
     vel = new PVector (10,0);
   }
   //-------------------------------------------------------
   void move() {
-    for (int i = 0; i < snake_size; i ++) {
-      pos[snake_size - i] = pos[snake_size - i - 1];
+    if (alive) {
+      for (int i = snake_size - 1; i > 0; i--) {
+        //need tmp variable for this to work
+        tmp = new PVector(pos.get(i-1).x, pos.get(i-1).y);
+        pos.set(i, tmp);
+      }
+      pos.set(0, pos.get(0).add(vel));
     }
-    pos[4] = pos[3];
-    pos[3] = pos[2];
-    pos[2] = pos[1];
-    pos[1] = pos[0];
-    pos[0] = pos[0].add(vel);
   }
   //-------------------------------------------------------
   
   void show(){
     for (int i = 0; i < snake_size; i ++){
       fill(0);
-      square(pos[i].x, pos[i].y, 10);
+      square(pos.get(i).x, pos.get(i).y, 10);
     }
   }
   
@@ -36,5 +39,7 @@ class Snake {
   
   
   
+  
+
   
 }
