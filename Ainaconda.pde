@@ -1,17 +1,22 @@
 Snake test;
+Snakefood snakefood;
 boolean isFood = false;
 
 
 
 void setup() {
   size(800, 800); //size of the window
-  frameRate(2);//increase this to make the dots go faster
-  test = new Snake();//create a new population with 1000 members
-}
+  frameRate(10);//increase this to make the dots go faster
+  test = new Snake();//create a new snake 
+  snakefood = new Snakefood();
+  snakefood.addfood();
 
+}
+ //<>//
 
 void draw() { 
   background(255);
-  test.move(); //<>//
+  snakefood.show();
+  test.move();
   test.show();
 }
