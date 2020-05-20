@@ -2,13 +2,14 @@ class Snake {
   ArrayList<PVector> pos;
   PVector vel;
   PVector tmp;
-  
   int snake_size;
+  
+  int[] eyes;
   
   boolean alive  = true;
   
-  Snake() {
-    snake_size = 5;
+  Snake(int starting_snake_size) {
+    snake_size = starting_snake_size;
     pos = new ArrayList<PVector>();
     for (int i = 0; i < snake_size; i ++) {
       pos.add(new PVector(width/2 + 10*i, height/2 + 10*i));
@@ -27,7 +28,7 @@ class Snake {
       pos.set(0, pos.get(0).add(vel));
     }
     //death by walls
-    if (pos.get(0).x > height || pos.get(0).x < 0 || pos.get(0).y < 0 || pos.get(0).y > height) {
+    if (!inbox(pos.get(0))) {
       alive = false;
     }
     //death by snake
@@ -37,7 +38,7 @@ class Snake {
      }
     }
     //food time?
-    if (abs(pos.get(0).x - snakefood.food_pos.x) <2  && abs(pos.get(0).y - snakefood.food_pos.y) <2) { //<>//
+    if (dist(pos.get(0).x, pos.get(0).y,  snakefood.food_pos.x, snakefood.food_pos.y) <5) { //<>//
       eat();
     }
     //PVector holder = pos.get(0);
@@ -51,7 +52,10 @@ class Snake {
       if (i ==0){
         fill(0,255,0);
       }
-      square(pos.get(i).x, pos.get(i).y, 8);
+      square(pos.get(i).x, pos.get(i).y, 10);
+      look();
+      println("eyes: " + eyes[0]);
+      
     }
   }
   
@@ -82,5 +86,50 @@ class Snake {
       }
     } 
   }
+  
+  //---------------------------------------------------------
+  
+  void look() {
+    eyes = new int[8];
+    PVector headpos;
+    headpos = new PVector(pos.get(0).x , pos.get(0).y);
+    PVector direction;
+    for (int i = 0; i< eyes.length; i++) {
+      direction = PVector.fromAngle(i*(PI/4));
+      direction.mult(10);
+      eyes[i] = lookInDirection(headpos, direction);
+    }
+  }
+  
+  int lookInDirection  (PVector position, PVector direction) {
+    int distance = 0;
+    while (inbox(position)) {
+      position.add(direction);
+      distance ++;
+      // check all squares along direction out to the walls
+      if (dist(position.x, position.y,  snakefood.food_pos.x, snakefood.food_pos.y) < 5){
+        //see snakefood?
+        return distance;
+      }
+      for(int i = 1; i < snake_size; i ++) {
+        if (dist(position.x, position.y,  pos.get(i).x, pos.get(i).y) < 5){
+          //see snake body?
+          return distance;
+        }
+      }
+    }    
+    return distance;
+  }
+  
+  boolean inbox(PVector pos) {
+    // is a position inside the field of play?
+    if (pos.x < height || pos.x > 0 || pos.y > 0 || pos.y < height) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  
   
 }
