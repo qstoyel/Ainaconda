@@ -11,8 +11,29 @@ class NeuralNet {
 
   
   
-  NeuralNet(){
-    
+  NeuralNet(int inputs, int outputNo, int hiddenNo){
+        //set dimensions from parameters
+    iNodes = inputs;
+    oNodes = outputNo;
+    hNodes = hiddenNo;
+
+
+    //create first layer weights 
+    //included bias weight
+    whi = new Matrix(hNodes, iNodes +1);
+
+    //create second layer weights
+    //include bias weight
+    whh = new Matrix(hNodes, hNodes +1);
+
+    //create second layer weights
+    //include bias weight
+    woh = new Matrix(oNodes, hNodes +1);  
+
+    //set the matricies to random values
+    whi.randomize();
+    whh.randomize(); 
+    woh.randomize();
   }
   
   
@@ -27,7 +48,7 @@ class NeuralNet {
   //-----------------------------------------
   
   NeuralNet clone() {
-    NeuralNet clone = new NeuralNet();
+    NeuralNet clone = new NeuralNet(8, 9, 1);
     return clone;
   }
   //----------------------------------------

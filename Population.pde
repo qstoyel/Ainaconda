@@ -7,6 +7,7 @@ class Population {
   
   
   Population(int popSize) {
+    snakes = new Snake[popSize];
     for(int i = 0; i < popSize; i ++){
       snakes[i] = new Snake(starting_snake_size);
     }
@@ -23,19 +24,21 @@ class Population {
         snakes[i].update();
       }
     }
+    snakes[0].show();
     
     if (allSnakesDead) {
+      
       naturalSelection();
     }
   }
   
   //--------------------------------------
   
-  void naturalSelection() {
+  void naturalSelection() { //<>//
     calculateFitness();
     selectBest();
     Snake[] nextGen = new Snake[snakes.length];
-    nextGen[0] = snakes[bestSnakeNo];
+    nextGen[0] = snakes[bestSnakeNo].clone();
     
     for (int i = 1, popSize = snakes.length; i < popSize; i ++) {
       nextGen[i] = selectSnake().clone(); //select snake picks random snake from old pop, weighted by fitness
@@ -44,6 +47,7 @@ class Population {
     }
     
     snakes = nextGen.clone();
+    
   }
 
   

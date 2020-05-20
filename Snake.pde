@@ -2,6 +2,8 @@ class Snake {
   ArrayList<PVector> pos;
   PVector vel;
   PVector tmp;
+  Snakefood snakefood;
+
   
   int snake_size;
   int time = 0;
@@ -19,7 +21,9 @@ class Snake {
       pos.add(new PVector(width/2 + 10*i, height/2 + 10*i));
     }
     vel = new PVector (10,0);
-    brain = new NeuralNet();
+    brain = new NeuralNet(8, 3, 1);
+    snakefood = new Snakefood();  //
+    snakefood.addfood(); //starting tidbit
   }
   //-------------------------------------------------------
   
@@ -27,7 +31,8 @@ class Snake {
   void update(){
     //things to do each frame
     move();
-    show();
+    println("eyes 1: " + eyes[5]);
+    //show();
     
     
   }
@@ -56,16 +61,17 @@ class Snake {
      }
     }
     //food time?
-    if (dist(pos.get(0).x, pos.get(0).y,  snakefood.food_pos.x, snakefood.food_pos.y) <5) { //<>//
+    if (dist(pos.get(0).x, pos.get(0).y,  snakefood.food_pos.x, snakefood.food_pos.y) <5) {
       eat();
     }
     time ++;
     //PVector holder = pos.get(0);
     //println("Head at: " + holder);
-  } //<>//
+  }
   //----------------------------------------------------------------
   
   void show(){
+    snakefood.show();
     for (int i = 0; i < snake_size; i ++){
       fill(0);
       if (i ==0){
@@ -118,6 +124,8 @@ class Snake {
       direction = PVector.fromAngle(i*(PI/4));
       direction.mult(10);
       eyes[i] = lookInDirection(headpos, direction);
+      //println("pos is: " + headpos.add(direction).x);
+      //println("dir is: " + direction.x);
     }
   }
   //--------------------------------------------------------------
@@ -126,8 +134,11 @@ class Snake {
     
   }
   //--------------------------------------------------------------------
-  int lookInDirection  (PVector position, PVector direction) {
+  int lookInDirection  (PVector p, PVector d) {
     //look along a given direction from a position and return distance to first object
+    PVector position = new PVector(p.x, p.y);
+    PVector direction = new PVector(d.x, d.y);
+
     int distance = -1;
     while (inbox(position)) {
       position.add(direction);
