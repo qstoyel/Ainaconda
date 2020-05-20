@@ -2,9 +2,13 @@ class Snake {
   ArrayList<PVector> pos;
   PVector vel;
   PVector tmp;
-  int snake_size;
   
+  int snake_size;
+  int time = 0;
+  float fitness = 0;
+  NeuralNet brain;
   int[] eyes;
+  PVector thought; //output of nn
   
   boolean alive  = true;
   
@@ -15,10 +19,24 @@ class Snake {
       pos.add(new PVector(width/2 + 10*i, height/2 + 10*i));
     }
     vel = new PVector (10,0);
+    brain = new NeuralNet();
   }
   //-------------------------------------------------------
+  
+  
+  void update(){
+    //things to do each frame
+    move();
+    show();
+    
+    
+  }
+  
+  
+  //-----------------------------------------------------
   void move() {
     if (alive) {
+      look();
       getdir();
       for (int i = snake_size - 1; i > 0; i--) {
         //need tmp variable for this to work
@@ -41,10 +59,11 @@ class Snake {
     if (dist(pos.get(0).x, pos.get(0).y,  snakefood.food_pos.x, snakefood.food_pos.y) <5) { //<>//
       eat();
     }
+    time ++;
     //PVector holder = pos.get(0);
     //println("Head at: " + holder);
   } //<>//
-  //-------------------------------------------------------
+  //----------------------------------------------------------------
   
   void show(){
     for (int i = 0; i < snake_size; i ++){
@@ -53,8 +72,7 @@ class Snake {
         fill(0,255,0);
       }
       square(pos.get(i).x, pos.get(i).y, 10);
-      look();
-      println("eyes: " + eyes[0]);
+      //println("food y: " + snakefood.food_pos.y);
       
     }
   }
@@ -71,6 +89,7 @@ class Snake {
   
   //---------------------------------------------------------
   void getdir() {
+    //get user input to set dir
     if (keyPressed) {
       if (key == 'a') {
         vel = new PVector(-10,0) ;
@@ -90,6 +109,7 @@ class Snake {
   //---------------------------------------------------------
   
   void look() {
+    // look in 8 directions outwards from head
     eyes = new int[8];
     PVector headpos;
     headpos = new PVector(pos.get(0).x , pos.get(0).y);
@@ -100,9 +120,15 @@ class Snake {
       eyes[i] = lookInDirection(headpos, direction);
     }
   }
-  
+  //--------------------------------------------------------------
+  void think() {
+    thought = brain.think(eyes);
+    
+  }
+  //--------------------------------------------------------------------
   int lookInDirection  (PVector position, PVector direction) {
-    int distance = 0;
+    //look along a given direction from a position and return distance to first object
+    int distance = -1;
     while (inbox(position)) {
       position.add(direction);
       distance ++;
@@ -123,13 +149,34 @@ class Snake {
   
   boolean inbox(PVector pos) {
     // is a position inside the field of play?
-    if (pos.x < height || pos.x > 0 || pos.y > 0 || pos.y < height) {
+    if (pos.x < height && pos.x > 0 && pos.y > 0 && pos.y < height) {
       return true;
     }
     else {
       return false;
     }
   }
+ //-------------------------------------------------------------------------------------------------------------
+  void calculateFitness(){
+    //is snake good at life?
+    fitness = 0.0001 * time + snake_size - starting_snake_size + 0.001* dist(pos.get(0).x, pos.get(0).y, snakefood.food_pos.x, snakefood.food_pos.y);
+  }
+  
+  
+  //-------------------------------------------------------------------
+  Snake clone() {
+    Snake clone = new Snake(starting_snake_size);
+    clone.brain = brain.clone();
+    return clone;
+  }
+  
+  //--------------------------------------------------
+  
+  void mutate() {
+    brain.mutate(globalMutationRate);
+  }
+  
+  
   
   
 }

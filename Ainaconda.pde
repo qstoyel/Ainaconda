@@ -2,6 +2,7 @@ Snake test;
 Snakefood snakefood;
 boolean isFood = false;
 int starting_snake_size = 5;
+float globalMutationRate = 0.02;
 
 
 

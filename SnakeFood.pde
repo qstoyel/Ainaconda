@@ -8,7 +8,7 @@ class Snakefood {
   }
   //----------------------------
   void addfood(){
-    food_pos = new PVector(round(random((width-20)/10))*10, random(round((height-20)/10))*10); 
+    food_pos = new PVector(round(random((width-20)/10))*10, round(random((height-20)/10))*10); 
   }
   
   //----------------------------------
